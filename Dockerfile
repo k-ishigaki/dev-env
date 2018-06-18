@@ -15,7 +15,9 @@ RUN echo "RUN start" &&\
     apt-get install -y build-essential &&\
     cd ~ && mkdir workspace && cd workspace &&\
     git clone https://github.com/k-ishigaki/dotfiles &&\
-    cd dotfiles && make &&\
+    cd dotfiles && make && cd .. &&\
+    apt-get install -y cabal-install &&\
+    cabal update && cabal install idris &&\
     echo "RUN end"
 
 
