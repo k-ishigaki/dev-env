@@ -9,4 +9,8 @@ docker build --no-cache=true\
     -t k-ishigaki/dev-env\
     .
 
-docker run --rm -it k-ishigaki/dev-env bash
+docker run --rm\
+    --env http_proxy=${http_proxy}\
+    --env https_proxy=${https_proxy}\
+    -it k-ishigaki/dev-env\
+    bash
