@@ -1,22 +1,36 @@
-FROM ubuntu
+FROM alpine
 MAINTAINER k-ishigaki <k-ishigaki@frontier.hokudai.ac.jp>
 
 ENV PATH=/root/.pyenv/bin:$PATH
 
-RUN useradd k-ishigaki
+RUN apk update && \
+    apk upgrade && \
+	apk add --no-cache \
+	curl \
+	gcc \
+	git \
+	linux-headers \
+	musl-dev \
+	neovim \
+	python-dev \
+	py-pip \
+	python3-dev \
+	py3-pip \
+	make \
+	gcc-avr \
+	binutils-avr \
+	avr-libc && \
+	rm -rf /var/cache/apk/*
 
-RUN echo "RUN start" &&\
-    apt-get update && apt-get install -y --no-install-recommends curl git &&\
-    apt-get install -y software-properties-common &&\
-    add-apt-repository -y ppa:neovim-ppa/stable &&\
-    apt-get update && apt-get install -y neovim &&\
-    apt-get install -y build-essential &&\
-    cd ~ && mkdir workspace && cd - &&\
-    git clone https://github.com/k-ishigaki/dotfiles &&\
-    cd dotfiles && make && cd - &&\
-    apt-get install -y libssl-dev zlib1g-dev &&\
-    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash &&\
-    pyenv update && pyenv install 3.6.5 && pyenv global 3.6.5 &&\
-    apt-get install -y python3-pip &&\
-    pip3 install neovim && pip3 install --upgrade neovim &&\
-    echo "RUN end"
+ENV LANG="ja_JP.UTF-8" LANGUAGE="ja_JP:ja" LC_ALL="ja_JP.UTF-8"
+
+RUN pip3 install --upgrade pip neovim
+
+RUN git clone https://github.com/k-ishigaki/dotfiles && \
+    cd dotfiles && make && cd - && \
+    # install plugins and exit
+	nvim -c qa
+
+WORKDIR /home/workspace
+
+ENTRYPOINT ["nvim"]
