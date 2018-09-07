@@ -1,0 +1,37 @@
+version: "3"
+services:
+    platformio:
+        image: platformio
+        build:
+            context: https://github.com/k-ishigaki/platformio-docker.git
+        volumes:
+            - /c/Users/kazuki/workspace:/root/workspace
+            - platformio:/root/.platformio
+        stdin_open: true
+
+    cquery:
+        image: cquery
+        build:
+            context: https://github.com/k-ishigaki/cquery-docker.git
+        depends_on:
+            - platformio
+        volumes:
+            - /c/Users/kazuki/workspace:/root/workspace
+            - platformio:/root/.platformio
+        stdin_open: true
+
+    main:
+        image: main
+        build:
+            context: https://github.com/k-ishigaki/neovim-docker.git
+        depends_on:
+            - cquery
+            - platformio
+        volumes:
+            - /c/Users/kazuki/workspace:/root/workspace
+            - /var/run/docker.sock:/var/run/docker.sock
+            - platformio:/root/.platformio
+        stdin_open: true
+
+volumes:
+    platformio:
